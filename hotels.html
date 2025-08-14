@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwiftStay — Hotels (SE Nigeria)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <strong>SwiftStay Nigeria</strong>
+    <a href="index.html">Home</a>
+    <a href="hotels.html">Hotels</a>
+    <a href="onboarding.html">Onboarding</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Smart Recommendations — Southeastern Nigeria</h1>
+  <p>Sorted by rating by default. Switch to price for deals.</p>
+  <div style="margin:10px 0">
+    <label>Sort:</label>
+    <select id="sortBy">
+      <option value="rating">Rating (High → Low)</option>
+      <option value="price">Price (Low → High)</option>
+    </select>
+    <button class="btn" id="reload">Apply</button>
+  </div>
+  <div id="hotel-list" class="grid cards"></div>
+</div>
+
+<footer>© 2025 SwiftStay Nigeria</footer>
+
+<script src="js/recommendations.js"></script>
+</body>
+</html>

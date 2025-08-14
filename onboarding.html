@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwiftStay — Hotel Onboarding</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <strong>SwiftStay Nigeria</strong>
+    <a href="index.html">Home</a>
+    <a href="hotels.html">Hotels</a>
+    <a href="onboarding.html">Onboarding</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>List your hotel</h1>
+  <form id="onboardForm">
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;">
+      <div>
+        <label>Hotel Name</label>
+        <input name="name" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+      </div>
+      <div>
+        <label>City</label>
+        <input name="city" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+      </div>
+      <div>
+        <label>State</label>
+        <input name="state" required value="Enugu" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Amenities (optional)</label>
+        <input name="amenities" placeholder="Comma-separated" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Primary Photo</label>
+        <input type="file" id="photo" accept="image/*">
+      </div>
+      <div>
+        <button class="btn" type="button" id="previewEnhance">Preview AI Enhancement</button>
+      </div>
+      <div>
+        <button class="btn" type="submit">Submit Onboarding</button>
+      </div>
+    </div>
+  </form>
+
+  <div id="enhancedWrap" style="margin-top:18px;display:none;">
+    <h3>Enhanced preview</h3>
+    <img id="enhancedImg" class="preview" alt="Enhanced preview">
+  </div>
+
+  <div id="result" style="margin-top:18px;"></div>
+</div>
+
+<footer>© 2025 SwiftStay Nigeria</footer>
+
+<script>
+const API_BASE = "http://localhost:8000";
+
+const photoInput = document.getElementById('photo');
+const previewBtn = document.getElementById('previewEnhance');
+const enhancedWrap = document.getElementById('enhancedWrap');
+const enhancedImg = document.getElementById('enhancedImg');
+
+previewBtn.onclick = async () => {
+  if (!photoInput.files.length) { alert('Choose a photo first'); return; }
+  const fd = new FormData();
+  fd.append('file', photoInput.files[0]);
+  const res = await fetch(`${API_BASE}/enhance-photo`, { method: 'POST', body: fd });
+  const data = await res.json();
+  if (data.enhanced_data_url) {
+    enhancedImg.src = data.enhanced_data_url;
+    enhancedWrap.style.display = 'block';
+  } else {
+    alert('Enhancement failed.');
+  }
+};
+
+document.getElementById('onboardForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const fd = new FormData();
+  fd.append('name', form.name.value);
+  fd.append('city', form.city.value);
+  fd.append('state', form.state.value);
+  fd.append('amenities', form.amenities.value || '');
+  if (photoInput.files.length) fd.append('photo', photoInput.files[0]);
+
+  const res = await fetch(`${API_BASE}/onboard-hotel`, { method: 'POST', body: fd });
+  const data = await res.json();
+  document.getElementById('result').innerHTML = `
+    <div class="card">
+      <p>${data.message}</p>
+      <p><strong>Amenities:</strong> ${data.amenities}</p>
+      ${data.enhanced_photo ? `<img class="preview" src="${data.enhanced_photo}" alt="Enhanced">` : ""}
+    </div>`;
+};
+</script>
+</body>
+</html>

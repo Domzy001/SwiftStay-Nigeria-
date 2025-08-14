@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwiftStay Nigeria — Home</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <strong>SwiftStay Nigeria</strong>
+    <a href="index.html">Home</a>
+    <a href="hotels.html">Hotels</a>
+    <a href="onboarding.html">Onboarding</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>Discover great stays in Southeastern Nigeria</h1>
+    <p>AI-curated hotels across Enugu, Abia, Anambra, Ebonyi, and Imo.</p>
+    <a class="btn" href="hotels.html">See recommendations</a>
+  </div>
+</section>
+
+<section class="container">
+  <h2>Top picks today</h2>
+  <div id="home-recos" class="grid cards" aria-live="polite"></div>
+</section>
+
+<footer>© 2025 SwiftStay Nigeria</footer>
+
+<!-- Floating mini chatbot (demo placeholder) -->
+<a id="chat-fab" href="#" aria-label="Open chat">AI</a>
+<div id="chat-panel" role="dialog" aria-label="AI Assistant">
+  <div id="chat-log"></div>
+  <div id="chat-input-wrap">
+    <input id="chat-input" placeholder="Ask about hotels…" />
+    <button id="chat-send">Send</button>
+  </div>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000"; // change if hosted elsewhere
+
+async function loadHomeRecs(){
+  const res = await fetch(`${API_BASE}/recommendations`);
+  const data = await res.json();
+  const box = document.getElementById('home-recos');
+  box.innerHTML = data.hotels.slice(0,4).map(h => `
+    <article class="card">
+      <h3>${h.name}</h3>
+      <p>${h.city}, ${h.state}</p>
+      <p><strong>★ ${h.rating}</strong> • ₦${h.price.toLocaleString()}</p>
+      <div>${h.amenities.map(a=>`<span class="badge">${a}</span>`).join(' ')}</div>
+    </article>
+  `).join('');
+}
+loadHomeRecs();
+
+// Tiny local chatbot mock (replace with your real AI later)
+const fab = document.getElementById('chat-fab');
+const panel = document.getElementById('chat-panel');
+const log = document.getElementById('chat-log');
+const input = document.getElementById('chat-input');
+document.getElementById('chat-send').onclick = () => {
+  const msg = input.value.trim(); if(!msg) return;
+  log.innerHTML += `<div><b>You:</b> ${msg}</div>`;
+  input.value="5000";
+  // simple reply
+  log.innerHTML += `<div><b>AI:</b> Try <em>Hotels</em> page for top picks or use Onboarding to list your hotel.</div>`;
+  log.scrollTop = log.scrollHeight;
+};
+fab.onclick = (e)=>{ e.preventDefault(); panel.style.display = panel.style.display ? '' : 'block'; };
+</script>
+</body>
+</html>
